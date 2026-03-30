@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Молекулы</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui; background: #111; color: white; }
+    #viewer { width: 100%; height: 80vh; background: #1a1a1a; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px; background: #1f1f1f; }
+    .tab {
+      padding: 10px 20px;
+      background: #333;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab.active {
+      background: #00ffaa;
+      color: black;
+      border-color: #00ffaa;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="tabs" id="tabs"></div>
+  
+  <model-viewer 
+    id="viewer"
+    src="H2O.glb"
+    camera-controls
+    auto-rotate
+    auto-rotate-delay="3000"
+    rotation-per-second="30deg"
+    shadow-intensity="1"
+    exposure="0.8"
+    camera-orbit="45deg 55deg 4m"
+    style="width: 100%; height: 80vh;">
+  </model-viewer>
+
+  <script>
+    const models = [
+      { name: "H₂O", file: "H2O.glb" },
+      { name: "HCl", file: "HCl.glb" },
+      { name: "H₂S", file: "H2S.glb" },
+      { name: "NaOH", file: "NaOH.glb" },
+      { name: "CH₄", file: "CH4.glb" },
+      { name: "C₂H₆", file: "C2H6.glb" },
+      { name: "C₂H₄", file: "C2H4.glb" },
+      { name: "C₂H₂", file: "C2H2.glb" },
+      { name: "CH₃COOH", file: "CH3COOH.glb" },
+      { name: "CH₃COONa", file: "CH3COONa.glb" }
+    ];
+
+    const tabsContainer = document.getElementById('tabs');
+    const viewer = document.getElementById('viewer');
+
+    models.forEach((model, index) => {
+      const btn = document.createElement('button');
+      btn.className = 'tab';
+      btn.textContent = model.name;
+      btn.onclick = () => {
+        viewer.src = model.file;
+        // сброс камеры для удобства
+        viewer.cameraOrbit = "45deg 55deg 4m";
+        
+        // убираем active у всех и ставим на эту
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      };
+      tabsContainer.appendChild(btn);
+      
+      // первый по умолчанию активный
+      if (index === 0) btn.classList.add('active');
+    });
+  </script>
+</body>
+</html>
