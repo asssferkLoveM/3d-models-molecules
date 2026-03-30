@@ -8,55 +8,55 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   
   <style>
-    body { font-family: system-ui, sans-serif; margin: 0; }
-    model-viewer { 
-      width: 100%; 
-      height: calc(100vh - 73px); 
-      background: #0f172a; 
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    .viewer-container {
+      flex: 1;
+      width: 100%;
+      min-height: 500px;           /* защита от нулевой высоты */
+      background: #0f172a;
+      position: relative;
     }
-    .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #60a5fa;
-      font-size: 1.1rem;
+    model-viewer {
+      width: 100% !important;
+      height: 100% !important;
     }
   </style>
 </head>
 <body class="bg-slate-950 text-white flex h-screen overflow-hidden">
 
-  <!-- Левая панель с вкладками -->
+  <!-- Левая панель -->
   <div class="w-80 bg-slate-900 border-r border-slate-700 flex flex-col">
     <div class="p-6 border-b border-slate-700">
       <h1 class="text-2xl font-bold text-blue-400">3D Молекулы</h1>
       <p class="text-sm text-slate-400 mt-1">Выберите молекулу</p>
     </div>
-    
     <div id="tabs" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
   </div>
 
-  <!-- Основная область -->
-  <div class="flex-1 flex flex-col relative">
-    <div class="p-6 border-b border-slate-700 flex items-center justify-between bg-slate-900">
+  <!-- Правая часть с моделью -->
+  <div class="flex-1 flex flex-col">
+    <div class="p-6 border-b border-slate-700 bg-slate-900 flex items-center justify-between">
       <div id="current-name" class="text-3xl font-bold text-blue-400">H₂O</div>
-      <div class="text-sm text-slate-400">Вращайте мышкой • Колёсико — приближение</div>
+      <div class="text-sm text-slate-400">Вращайте мышкой • Колёсико — zoom</div>
     </div>
     
-    <model-viewer 
-      id="viewer"
-      src="H2O.glb"
-      camera-controls
-      auto-rotate
-      auto-rotate-delay="1500"
-      shadow-intensity="1"
-      exposure="0.7"
-      loading="eager"
-      style="width:100%; height:100%;">
-    </model-viewer>
+    <div class="viewer-container">
+      <model-viewer 
+        id="viewer"
+        src="H2O.glb"
+        camera-controls
+        auto-rotate
+        auto-rotate-delay="1500"
+        shadow-intensity="1"
+        exposure="0.8"
+        loading="eager"
+      ></model-viewer>
 
-    <!-- Индикатор загрузки -->
-    <div id="loading" class="loading hidden">Загрузка модели...</div>
+      <div id="loading" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                            text-blue-400 text-lg font-medium hidden">
+        Загрузка модели...
+      </div>
+    </div>
   </div>
 
 <script>
@@ -76,35 +76,31 @@
   const tabsContainer = document.getElementById('tabs');
   const viewer = document.getElementById('viewer');
   const currentName = document.getElementById('current-name');
-  const loadingIndicator = document.getElementById('loading');
-
-  viewer.addEventListener('model-visibility', () => {
-    loadingIndicator.classList.add('hidden');
-  });
+  const loading = document.getElementById('loading');
 
   models.forEach((mol, index) => {
     const btn = document.createElement('button');
-    btn.className = `w-full text-left px-6 py-4 rounded-2xl text-lg font-medium transition-all 
-                     hover:bg-slate-800 active:scale-95 ${index === 0 ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-300 hover:text-white'}`;
-    btn.innerHTML = mol.name;
+    btn.className = `w-full text-left px-6 py-4 rounded-2xl text-lg font-medium transition-all hover:bg-slate-800 ${index === 0 ? 'bg-blue-600 text-white' : 'text-slate-300'}`;
+    btn.textContent = mol.name;
     
     btn.onclick = () => {
-      loadingIndicator.classList.remove('hidden');
+      loading.classList.remove('hidden');
       viewer.src = mol.file;
       currentName.textContent = mol.name;
       
-      document.querySelectorAll('#tabs button').forEach(b => {
-        b.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-      });
-      btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+      document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+      btn.classList.add('bg-blue-600', 'text-white');
     };
-    
     tabsContainer.appendChild(btn);
   });
 
-  viewer.addEventListener('error', (event) => {
-    console.error('Ошибка загрузки модели:', event);
-    loadingIndicator.textContent = 'Ошибка загрузки модели 😕';
+  // Скрываем индикатор, когда модель загрузилась
+  viewer.addEventListener('model-visibility', () => loading.classList.add('hidden'));
+
+  // Если всё равно ошибка — показываем понятное сообщение
+  viewer.addEventListener('error', () => {
+    loading.textContent = 'Не удалось загрузить модель 😕 Проверьте файл .glb';
+    loading.classList.remove('hidden');
   });
 </script>
 
