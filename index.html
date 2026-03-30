@@ -8,11 +8,10 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   
   <style>
-    body { margin: 0; padding: 0; font-family: system-ui, sans-serif; overflow: hidden; }
+    body { margin: 0; font-family: system-ui, sans-serif; overflow: hidden; }
     .sidebar {
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 0; top: 0;
       width: 320px;
       height: 100vh;
       background: #0f172a;
@@ -22,8 +21,7 @@
     }
     .viewer-wrapper {
       position: absolute;
-      left: 320px;
-      top: 0;
+      left: 320px; top: 0;
       width: calc(100% - 320px);
       height: 100vh;
       background: #0f172a;
@@ -31,7 +29,6 @@
     model-viewer {
       width: 100% !important;
       height: 100% !important;
-      display: block;
     }
   </style>
 </head>
@@ -53,16 +50,11 @@
       src="H2O.glb"
       camera-controls
       auto-rotate
-      auto-rotate-delay="1000"
+      auto-rotate-delay="1200"
       shadow-intensity="1"
-      exposure="0.8"
+      exposure="0.85"
       loading="eager"
     ></model-viewer>
-
-    <div id="loading" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                          text-blue-400 text-xl font-medium hidden">
-      Загрузка модели...
-    </div>
   </div>
 
 <script>
@@ -81,34 +73,33 @@
 
   const tabsContainer = document.getElementById('tabs');
   const viewer = document.getElementById('viewer');
-  const loading = document.getElementById('loading');
 
   models.forEach((mol, index) => {
     const btn = document.createElement('button');
-    btn.className = `w-full text-left px-6 py-4 rounded-2xl text-lg font-medium transition-all hover:bg-slate-800 ${index === 0 ? 'bg-blue-600 text-white' : 'text-slate-300'}`;
+    btn.className = `w-full text-left px-6 py-4 rounded-2xl text-lg font-medium transition-all 
+                     hover:bg-slate-800 ${index === 0 ? 'bg-blue-600 text-white' : 'text-slate-300'}`;
     btn.textContent = mol.name;
     
     btn.onclick = () => {
-      loading.classList.remove('hidden');
       viewer.src = mol.file;
-      document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+      
+      // Обновляем активную кнопку
+      document.querySelectorAll('#tabs button').forEach(b => 
+        b.classList.remove('bg-blue-600', 'text-white')
+      );
       btn.classList.add('bg-blue-600', 'text-white');
     };
+    
     tabsContainer.appendChild(btn);
   });
 
-  viewer.addEventListener('model-visibility', () => loading.classList.add('hidden'));
-  viewer.addEventListener('error', () => {
-    loading.textContent = 'Ошибка модели 😕 Попробуй перезагрузить страницу';
-    loading.classList.remove('hidden');
+  // Надёжное скрытие индикатора загрузки (если он вдруг появится)
+  viewer.addEventListener('load', () => {
+    console.log('Модель загружена успешно');
   });
 
-  // Дополнительная защита от zero size
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      viewer.style.height = '100%';
-      viewer.style.width = '100%';
-    }, 300);
+  viewer.addEventListener('error', (e) => {
+    console.error('Ошибка загрузки модели:', e);
   });
 </script>
 
