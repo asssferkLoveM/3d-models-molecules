@@ -8,54 +8,60 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   
   <style>
-    body { margin: 0; font-family: system-ui, sans-serif; }
-    .viewer-container {
-      flex: 1;
-      width: 100%;
-      min-height: 500px;           /* защита от нулевой высоты */
+    body { margin: 0; padding: 0; font-family: system-ui, sans-serif; overflow: hidden; }
+    .sidebar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 320px;
+      height: 100vh;
       background: #0f172a;
-      position: relative;
+      border-right: 2px solid #334155;
+      z-index: 10;
+      overflow-y: auto;
+    }
+    .viewer-wrapper {
+      position: absolute;
+      left: 320px;
+      top: 0;
+      width: calc(100% - 320px);
+      height: 100vh;
+      background: #0f172a;
     }
     model-viewer {
       width: 100% !important;
       height: 100% !important;
+      display: block;
     }
   </style>
 </head>
-<body class="bg-slate-950 text-white flex h-screen overflow-hidden">
+<body>
 
   <!-- Левая панель -->
-  <div class="w-80 bg-slate-900 border-r border-slate-700 flex flex-col">
+  <div class="sidebar">
     <div class="p-6 border-b border-slate-700">
       <h1 class="text-2xl font-bold text-blue-400">3D Молекулы</h1>
       <p class="text-sm text-slate-400 mt-1">Выберите молекулу</p>
     </div>
-    <div id="tabs" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+    <div id="tabs" class="p-4 space-y-2"></div>
   </div>
 
-  <!-- Правая часть с моделью -->
-  <div class="flex-1 flex flex-col">
-    <div class="p-6 border-b border-slate-700 bg-slate-900 flex items-center justify-between">
-      <div id="current-name" class="text-3xl font-bold text-blue-400">H₂O</div>
-      <div class="text-sm text-slate-400">Вращайте мышкой • Колёсико — zoom</div>
-    </div>
-    
-    <div class="viewer-container">
-      <model-viewer 
-        id="viewer"
-        src="H2O.glb"
-        camera-controls
-        auto-rotate
-        auto-rotate-delay="1500"
-        shadow-intensity="1"
-        exposure="0.8"
-        loading="eager"
-      ></model-viewer>
+  <!-- 3D область -->
+  <div class="viewer-wrapper">
+    <model-viewer 
+      id="viewer"
+      src="H2O.glb"
+      camera-controls
+      auto-rotate
+      auto-rotate-delay="1000"
+      shadow-intensity="1"
+      exposure="0.8"
+      loading="eager"
+    ></model-viewer>
 
-      <div id="loading" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-                            text-blue-400 text-lg font-medium hidden">
-        Загрузка модели...
-      </div>
+    <div id="loading" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+                          text-blue-400 text-xl font-medium hidden">
+      Загрузка модели...
     </div>
   </div>
 
@@ -75,7 +81,6 @@
 
   const tabsContainer = document.getElementById('tabs');
   const viewer = document.getElementById('viewer');
-  const currentName = document.getElementById('current-name');
   const loading = document.getElementById('loading');
 
   models.forEach((mol, index) => {
@@ -86,21 +91,24 @@
     btn.onclick = () => {
       loading.classList.remove('hidden');
       viewer.src = mol.file;
-      currentName.textContent = mol.name;
-      
       document.querySelectorAll('#tabs button').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
       btn.classList.add('bg-blue-600', 'text-white');
     };
     tabsContainer.appendChild(btn);
   });
 
-  // Скрываем индикатор, когда модель загрузилась
   viewer.addEventListener('model-visibility', () => loading.classList.add('hidden'));
-
-  // Если всё равно ошибка — показываем понятное сообщение
   viewer.addEventListener('error', () => {
-    loading.textContent = 'Не удалось загрузить модель 😕 Проверьте файл .glb';
+    loading.textContent = 'Ошибка модели 😕 Попробуй перезагрузить страницу';
     loading.classList.remove('hidden');
+  });
+
+  // Дополнительная защита от zero size
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      viewer.style.height = '100%';
+      viewer.style.width = '100%';
+    }, 300);
   });
 </script>
 
