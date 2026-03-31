@@ -44,15 +44,16 @@
     }
 
     .info-panel {
-      max-width: 320px;
-      font-size: 14px;
-      line-height: 1.4;
+      max-width: 340px;
+      font-size: 16.5px;        /* ← увеличил шрифт */
+      line-height: 1.5;
       color: #cbd5e1;
       text-align: right;
-      background: rgba(30, 41, 55, 0.85);
-      padding: 10px 16px;
+      background: rgba(30, 41, 55, 0.9);
+      padding: 16px 18px;       /* ← добавил больше отступов сверху */
       border-radius: 12px;
       border: 1px solid #475569;
+      margin-top: 4px;          /* ← текст стал немного ниже */
     }
 
     model-viewer {
@@ -154,7 +155,7 @@
     { name: "C₂H₄",    file: "C2H4.glb", info: "Этилен (этен) — важнейший алкен. Используется для производства полиэтилена." },
     { name: "C₂H₂",    file: "C2H2.glb", info: "Ацетилен — газ, применяемый в сварке (кислородно-ацетиленовое пламя)." },
     { name: "CH₃COOH", file: "CH3COOH.glb", info: "Уксусная кислота — слабая органическая кислота. Основной компонент уксуса." },
-    { name: "CH₃COONa",file: "CH3COONa.glb", info: "Ацетат натрия — соль уксусной кислоты. Используется в грелках и пищевой промышленности.ааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааааа" }
+    { name: "CH₃COONa",file: "CH3COONa.glb", info: "Ацетат натрия — соль уксусной кислоты. Используется в грелках и пищевой промышленности." }
   ];
 
   const viewer = document.getElementById('viewer');
@@ -175,10 +176,8 @@
       
       document.querySelectorAll('.model-item').forEach(el => el.classList.remove('active'));
       item.classList.add('active');
-      
       closeMenu();
     };
-    
     modelList.appendChild(item);
   });
 
@@ -194,7 +193,6 @@
     if (e.target === modal) closeMenu();
   });
 
-  // Начальные значения
   currentName.textContent = "H₂O";
   infoPanel.textContent = models[0].info;
 </script>
