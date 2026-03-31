@@ -20,7 +20,7 @@
       display: flex;
       align-items: center;
       padding: 0 20px;
-      justify-content: space-between;
+      gap: 15px;
     }
 
     .menu-button {
@@ -32,8 +32,34 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .menu-button:hover { background: #475569; }
+
+    .current-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: #60a5fa;
+      flex: 1;
+    }
+
+    .info-panel {
+      max-width: 320px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #cbd5e1;
+      text-align: right;
+      background: rgba(30, 41, 55, 0.85);
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid #475569;
+    }
+
+    model-viewer {
+      width: 100vw;
+      height: calc(100vh - 70px);
+      margin-top: 70px;
+    }
 
     .modal {
       position: fixed;
@@ -79,12 +105,6 @@
     }
     .model-item:hover { background: #334155; }
     .model-item.active { background: #3b82f6; color: white; }
-
-    model-viewer {
-      width: 100vw;
-      height: calc(100vh - 70px);
-      margin-top: 70px;
-    }
   </style>
 </head>
 <body>
@@ -94,7 +114,13 @@
     <div onclick="toggleMenu()" class="menu-button">
       📋 Выбрать молекулу
     </div>
-    <div id="current-name" class="text-white text-xl font-semibold"></div>
+    
+    <div id="current-name" class="current-name">H₂O</div>
+    
+    <!-- Информационная панель справа -->
+    <div id="info-panel" class="info-panel">
+      Вода — самое распространённое вещество на Земле. Состоит из двух атомов водорода и одного атома кислорода.
+    </div>
   </div>
 
   <!-- 3D модель -->
@@ -119,24 +145,24 @@
 
 <script>
   const models = [
-    { name: "H₂O",     file: "H2O.glb" },
-    { name: "HCl",     file: "HCl.glb" },
-    { name: "H₂S",     file: "H2S.glb" },
-    { name: "NaOH",    file: "NaOH.glb" },
-    { name: "CH₄",     file: "CH4.glb" },
-    { name: "C₂H₆",    file: "C2H6.glb" },
-    { name: "C₂H₄",    file: "C2H4.glb" },
-    { name: "C₂H₂",    file: "C2H2.glb" },
-    { name: "CH₃COOH", file: "CH3COOH.glb" },
-    { name: "CH₃COONa",file: "CH3COONa.glb" }
+    { name: "H₂O",     file: "H2O.glb", info: "Вода — самое распространённое вещество на Земле. Состоит из двух атомов водорода и одного атома кислорода." },
+    { name: "HCl",     file: "HCl.glb", info: "Хлороводород — бесцветный едкий газ с резким запахом. В воде образует соляную кислоту." },
+    { name: "H₂S",     file: "H2S.glb", info: "Сероводород — газ с характерным запахом тухлых яиц. Очень токсичен даже в малых концентрациях." },
+    { name: "NaOH",    file: "NaOH.glb", info: "Гидроксид натрия (каустическая сода) — сильное основание. Используется в производстве мыла и бумаги." },
+    { name: "CH₄",     file: "CH4.glb", info: "Метан — простейший углеводород. Основной компонент природного газа." },
+    { name: "C₂H₆",    file: "C2H6.glb", info: "Этан — насыщенный углеводород. Содержится в природном газе и используется как топливо." },
+    { name: "C₂H₄",    file: "C2H4.glb", info: "Этилен (этен) — важнейший алкен. Используется для производства полиэтилена." },
+    { name: "C₂H₂",    file: "C2H2.glb", info: "Ацетилен — газ, применяемый в сварке (кислородно-ацетиленовое пламя)." },
+    { name: "CH₃COOH", file: "CH3COOH.glb", info: "Уксусная кислота — слабая органическая кислота. Основной компонент уксуса." },
+    { name: "CH₃COONa",file: "CH3COONa.glb", info: "Ацетат натрия — соль уксусной кислоты. Используется в грелках и пищевой промышленности." }
   ];
 
   const viewer = document.getElementById('viewer');
   const modal = document.getElementById('modal');
   const currentName = document.getElementById('current-name');
+  const infoPanel = document.getElementById('info-panel');
   const modelList = document.getElementById('model-list');
 
-  // Создаём список молекул
   models.forEach((mol, index) => {
     const item = document.createElement('div');
     item.className = `model-item ${index === 0 ? 'active' : ''}`;
@@ -145,8 +171,8 @@
     item.onclick = () => {
       viewer.src = mol.file;
       currentName.textContent = mol.name;
+      infoPanel.textContent = mol.info;
       
-      // Обновляем активный элемент
       document.querySelectorAll('.model-item').forEach(el => el.classList.remove('active'));
       item.classList.add('active');
       
@@ -156,7 +182,6 @@
     modelList.appendChild(item);
   });
 
-  // Показать/скрыть меню
   function toggleMenu() {
     modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
   }
@@ -165,18 +190,13 @@
     modal.style.display = 'none';
   }
 
-  // Закрытие меню при клике вне списка
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeMenu();
   });
 
-  // Устанавливаем начальное название
+  // Начальные значения
   currentName.textContent = "H₂O";
-
-  // Дополнительно для лучшей работы на телефоне
-  viewer.addEventListener('load', () => {
-    console.log('Модель успешно загружена');
-  });
+  infoPanel.textContent = models[0].info;
 </script>
 
 </body>
