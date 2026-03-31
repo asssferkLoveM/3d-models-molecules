@@ -44,16 +44,15 @@
     }
 
     .info-panel {
-      max-width: 340px;
-      font-size: 16.5px;
-      line-height: 1.5;
+      max-width: 320px;
+      font-size: 14px;
+      line-height: 1.4;
       color: #cbd5e1;
       text-align: right;
-      background: rgba(30, 41, 55, 0.9);
-      padding: 14px 18px;        /* увеличил отступы внутри */
+      background: rgba(30, 41, 55, 0.85);
+      padding: 10px 16px;
       border-radius: 12px;
       border: 1px solid #475569;
-      margin-top: 12px;          /* ← СДЕЛАЛ БОЛЬШЕ ОТСТУПА СВЕРХУ */
     }
 
     model-viewer {
@@ -176,8 +175,10 @@
       
       document.querySelectorAll('.model-item').forEach(el => el.classList.remove('active'));
       item.classList.add('active');
+      
       closeMenu();
     };
+    
     modelList.appendChild(item);
   });
 
@@ -193,6 +194,7 @@
     if (e.target === modal) closeMenu();
   });
 
+  // Начальные значения
   currentName.textContent = "H₂O";
   infoPanel.textContent = models[0].info;
 </script>
