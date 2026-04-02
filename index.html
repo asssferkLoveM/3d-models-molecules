@@ -44,15 +44,16 @@
     }
 
     .info-panel {
-      max-width: 320px;
-      font-size: 14px;
-      line-height: 1.4;
+      max-width: 340px;
+      font-size: 16.5px;
+      line-height: 1.5;
       color: #cbd5e1;
       text-align: right;
-      background: rgba(30, 41, 55, 0.85);
-      padding: 10px 16px;
+      background: rgba(30, 41, 55, 0.9);
+      padding: 14px 18px;
       border-radius: 12px;
       border: 1px solid #475569;
+      margin-top: 12px;
     }
 
     model-viewer {
@@ -73,8 +74,8 @@
 
     .modal-content {
       background: #1e2937;
-      width: 90%;
-      max-width: 380px;
+      width: 92%;
+      max-width: 420px;
       max-height: 85vh;
       border-radius: 20px;
       overflow: hidden;
@@ -89,16 +90,16 @@
     }
 
     .model-list {
-      max-height: 60vh;
+      max-height: 65vh;
       overflow-y: auto;
       padding: 10px;
     }
 
     .model-item {
       width: 100%;
-      padding: 16px 20px;
+      padding: 15px 20px;
       text-align: left;
-      font-size: 18px;
+      font-size: 17px;
       border-radius: 12px;
       margin-bottom: 6px;
       transition: all 0.2s;
@@ -117,7 +118,6 @@
     
     <div id="current-name" class="current-name">H₂O</div>
     
-    <!-- Информационная панель справа -->
     <div id="info-panel" class="info-panel">
       Вода — самое распространённое вещество на Земле. Состоит из двух атомов водорода и одного атома кислорода.
     </div>
@@ -132,29 +132,40 @@
     auto-rotate-delay="1500"
     shadow-intensity="1"
     exposure="0.8"
-    loading="eager"
   ></model-viewer>
 
-  <!-- Модальное окно со списком -->
+  <!-- Модальное окно -->
   <div id="modal" class="modal">
     <div class="modal-content">
-      <div class="modal-header">Выберите молекулу</div>
+      <div class="modal-header">Выберите молекулу (22 шт.)</div>
       <div id="model-list" class="model-list"></div>
     </div>
   </div>
 
 <script>
   const models = [
-    { name: "H₂O",     file: "H2O.glb", info: "Вода — самое распространённое вещество на Земле. Состоит из двух атомов водорода и одного атома кислорода." },
-    { name: "HCl",     file: "HCl.glb", info: "Хлороводород — бесцветный едкий газ с резким запахом. В воде образует соляную кислоту." },
-    { name: "H₂S",     file: "H2S.glb", info: "Сероводород — газ с характерным запахом тухлых яиц. Очень токсичен даже в малых концентрациях." },
-    { name: "NaOH",    file: "NaOH.glb", info: "Гидроксид натрия (каустическая сода) — сильное основание. Используется в производстве мыла и бумаги." },
-    { name: "CH₄",     file: "CH4.glb", info: "Метан — простейший углеводород. Основной компонент природного газа." },
-    { name: "C₂H₆",    file: "C2H6.glb", info: "Этан — насыщенный углеводород. Содержится в природном газе и используется как топливо." },
-    { name: "C₂H₄",    file: "C2H4.glb", info: "Этилен (этен) — важнейший алкен. Используется для производства полиэтилена." },
-    { name: "C₂H₂",    file: "C2H2.glb", info: "Ацетилен — газ, применяемый в сварке (кислородно-ацетиленовое пламя)." },
-    { name: "CH₃COOH", file: "CH3COOH.glb", info: "Уксусная кислота — слабая органическая кислота. Основной компонент уксуса." },
-    { name: "CH₃COONa",file: "CH3COONa.glb", info: "Ацетат натрия — соль уксусной кислоты. Используется в грелках и пищевой промышленности." }
+    { name: "H₂O",           file: "H2O.glb",           info: "Вода — самое распространённое вещество на Земле. Состоит из двух атомов водорода и одного атома кислорода." },
+    { name: "HCl",           file: "HCl.glb",           info: "Хлороводород — бесцветный едкий газ. В воде образует соляную кислоту." },
+    { name: "H₂S",           file: "H2S.glb",           info: "Сероводород — газ с характерным запахом тухлых яиц. Очень токсичен." },
+    { name: "H₂SO₄",         file: "H2SO4.glb",         info: "Серная кислота — одна из важнейших сильных минеральных кислот в промышленности." },
+    { name: "NaOH",          file: "NaOH.glb",          info: "Гидроксид натрия (каустическая сода) — сильное основание." },
+    { name: "NH₃",           file: "NH3.glb",           info: "Аммиак — бесцветный газ с резким запахом. Основной компонент удобрений." },
+    { name: "CH₄",           file: "CH4.glb",           info: "Метан — простейший углеводород, главный компонент природного газа." },
+    { name: "C₂H₂",          file: "C2H2.glb",          info: "Ацетилен — газ, широко используется в газовой сварке." },
+    { name: "C₂H₄",          file: "C2H4.glb",          info: "Этилен — важнейший алкен, сырье для производства полиэтилена." },
+    { name: "C₂H₆",          file: "C2H6.glb",          info: "Этан — насыщенный углеводород, содержится в природном газе." },
+    { name: "C₂H₅OH",        file: "C2H5OH.glb",        info: "Этанол (этиловый спирт) — содержится в алкогольных напитках." },
+    { name: "C₂H₅OC₂H₅",     file: "C2H5OC2H5.glb",     info: "Диэтиловый эфир — известный растворитель и ранее применялся как анестетик." },
+    { name: "CH₃OH",         file: "CH3OH.glb",         info: "Метанол (метиловый спирт) — простейший спирт, очень токсичен." },
+    { name: "CH₃COOH",       file: "CH3COOH.glb",       info: "Уксусная кислота — слабая органическая кислота, основной компонент уксуса." },
+    { name: "CH₃COONa",      file: "CH3COONa.glb",      info: "Ацетат натрия — соль уксусной кислоты, используется в грелках." },
+    { name: "CH₃COOC₂H₅",    file: "CH3COOC2H5.glb",    info: "Этилацетат — сложный эфир с приятным фруктовым запахом." },
+    { name: "CH₃CHO",        file: "CH3CHO.glb",        info: "Ацетальдегид — важный промежуточный продукт органического синтеза." },
+    { name: "CH₂O",          file: "CH2O.glb",          info: "Формальдегид — газ с резким запахом, используется в производстве смол." },
+    { name: "C₄H₆",          file: "C4H6.glb",          info: "Бутадиен или циклоалкены — важные мономеры для производства каучука." },
+    { name: "C₆H₁₂",         file: "C6H12.glb",         info: "Циклогексан — циклический углеводород, популярный растворитель." },
+    { name: "Al₂Cl₆",        file: "Al2Cl6.glb",        info: "Хлорид алюминия — сильный катализатор в органической химии." },
+    { name: "CH₂NH₂COOH",    file: "CH2NH2COOH.glb",    info: "Глицин — простейшая аминокислота, входит в состав белков." }
   ];
 
   const viewer = document.getElementById('viewer');
@@ -175,10 +186,8 @@
       
       document.querySelectorAll('.model-item').forEach(el => el.classList.remove('active'));
       item.classList.add('active');
-      
       closeMenu();
     };
-    
     modelList.appendChild(item);
   });
 
@@ -194,7 +203,6 @@
     if (e.target === modal) closeMenu();
   });
 
-  // Начальные значения
   currentName.textContent = "H₂O";
   infoPanel.textContent = models[0].info;
 </script>
